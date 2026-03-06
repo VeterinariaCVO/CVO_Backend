@@ -7,23 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Appointment extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'client_id',
         'pet_id',
         'service_id',
-        'block_id',
-        'date',
-        'reason',
-        'service_id',
-        'active',
+        'time_slot_id',
+        'status',
+        'notes',
+        'created_by'
     ];
-
-    public function client()
-    {
-        return $this->belongsTo(User::class, 'client_id');
-    }
 
     public function pet()
     {
@@ -35,8 +26,13 @@ class Appointment extends Model
         return $this->belongsTo(Service::class);
     }
 
-    public function block()
+    public function timeSlot()
     {
-        return $this->belongsTo(Block::class);
+        return $this->belongsTo(TimeSlot::class);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

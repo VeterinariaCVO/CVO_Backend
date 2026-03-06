@@ -10,18 +10,13 @@ return new class extends Migration
     {
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('client_id');
-            $table->unsignedBigInteger('pet_id');
-            $table->unsignedBigInteger('block_id')->nullable();
-            $table->dateTime('date');
-            $table->string('reason');
-            $table->foreignId('service_id')->constrained('services')->onDelete('cascade');
-            $table->boolean('active')->default(true);
+            $table->foreignId('pet_id')->constrained('pets')->cascadeOnDelete();
+            $table->foreignId('service_id')->constrained('services')->cascadeOnDelete();
+            $table->foreignId('time_slot_id')->constrained('time_slots')->cascadeOnDelete();
+            $table->enum('status', ['pending', 'confirmed', 'completed', 'cancelled'])->default('pending');
+            $table->text('notes')->nullable();
+            $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
-
-            $table->foreign('block_id')->references('id')->on('blocks')->onDelete('set null');
-            $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('pet_id')->references('id')->on('pets')->onDelete('cascade');
         });
     }
 
