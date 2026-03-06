@@ -10,6 +10,6 @@ Route::get('/user', function (Request $request) {
 
 
 //LOGIN AND REGISTER
-Route::post('/register', [ApiAuthController::class, 'register']);
-Route::post('/login', [ApiAuthController::class, 'login']);
-Route::middleware('auth:sanctum')->post('/logout', [ApiAuthController::class, 'logout']);
+Route::post('/register', [AuthApiController::class, 'register']);
+Route::post('/login', [AuthApiController::class, 'login']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthApiController::class, 'logout']);
