@@ -8,3 +8,5 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+//crear user
+Route::post('/users', [UserController::class, 'create']);
