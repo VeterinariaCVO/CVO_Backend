@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthApiController;
+use App\Http\Controllers\ApiAuthController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -10,6 +10,6 @@ Route::get('/user', function (Request $request) {
 
 
 //LOGIN AND REGISTER
-Route::post('/register', [AuthApiController::class, 'register']);
-Route::post('/login', [AuthApiController::class, 'login']);
-Route::middleware('auth:sanctum')->post('/logout', [AuthApiController::class, 'logout']);
+Route::post('/register', [ApiAuthController::class, 'register']);
+Route::post('/login', [ApiAuthController::class, 'login']);
+Route::middleware('auth:sanctum')->post('/logout', [ApiAuthController::class, 'logout']);
