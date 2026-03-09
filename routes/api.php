@@ -9,7 +9,34 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
-//LOGIN AND REGISTER
+// LOGIN Y REGISTER
 Route::post('/register', [ApiAuthController::class, 'register']);
 Route::post('/login', [ApiAuthController::class, 'login']);
+
+
+// RUTA SOLO ADMIN
+Route::middleware(['auth:sanctum','role:1'])->get('/admin', function () {
+    return response()->json([
+        'message' => 'Bienvenido admin'
+    ]);
+});
+
+
+// RUTA SOLO EMPLEADO
+Route::middleware(['auth:sanctum','role:2'])->get('/empleado', function () {
+    return response()->json([
+        'message' => 'Bienvenido empleado'
+    ]);
+});
+
+
+// RUTA SOLO CLIENTE
+Route::middleware(['auth:sanctum','role:3'])->get('/cliente', function () {
+    return response()->json([
+        'message' => 'Bienvenido cliente'
+    ]);
+});
+
+
+// LOGOUT (cualquiera logueado)
 Route::middleware('auth:sanctum')->post('/logout', [ApiAuthController::class, 'logout']);
