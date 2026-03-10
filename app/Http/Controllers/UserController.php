@@ -52,7 +52,11 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        return response()->json([
+            "user" => $user
+        ]);
     }
 
     /**
@@ -60,7 +64,28 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
+            'role_id' => 'required|exists:roles,id',
+            'active' => 'required|boolean',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
+        ]);
+
+        // solo actualizar password si viene
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
+
+        return response()->json([
+            "message" => "Usuario actualizado correctamente",
+            "user" => $user
+        ]);
     }
 
     /**
@@ -68,6 +93,12 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        $user->delete();
+
+        return response()->json([
+            "message" => "Usuario eliminado correctamente"
+        ]);
     }
 }

@@ -10,6 +10,10 @@ Route::get('/user', function (Request $request) {
 
 //crear user
 Route::post('/users', [UserController::class, 'create']);
+//editar user
+Route::put('/users/{id}', [UserController::class,'update']);
+//eliminar user
+Route::delete('/users/{id}', [UserController::class,'destroy']);
 
 // LOGIN Y REGISTER
 Route::post('/register', [ApiAuthController::class, 'register']);
