@@ -3,17 +3,19 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiAuthController;
+use App\Http\Controllers\EmpleadoController;
+use App\Http\Controllers\UserController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+
 //crear user
 Route::post('/users', [UserController::class, 'create']);
-//editar user
 Route::put('/users/{id}', [UserController::class,'update']);
-//eliminar user
 Route::delete('/users/{id}', [UserController::class,'destroy']);
+
 
 // LOGIN Y REGISTER
 Route::post('/register', [ApiAuthController::class, 'register']);
@@ -36,6 +38,16 @@ Route::middleware(['auth:sanctum','role:2'])->get('/empleado', function () {
 });
 
 
+// ✅ RUTAS PERFIL EMPLEADO
+Route::middleware(['auth:sanctum','role:2'])->group(function () {
+
+    Route::get('/empleado/profile', [EmpleadoController::class,'profile']);
+
+    Route::put('/empleado/profile', [EmpleadoController::class,'updateProfile']);
+
+});
+
+
 // RUTA SOLO CLIENTE
 Route::middleware(['auth:sanctum','role:3'])->get('/cliente', function () {
     return response()->json([
@@ -44,5 +56,5 @@ Route::middleware(['auth:sanctum','role:3'])->get('/cliente', function () {
 });
 
 
-// LOGOUT (cualquiera logueado)
+// LOGOUT
 Route::middleware('auth:sanctum')->post('/logout', [ApiAuthController::class, 'logout']);
