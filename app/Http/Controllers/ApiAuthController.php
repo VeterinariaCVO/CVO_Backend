@@ -26,6 +26,7 @@ class ApiAuthController extends Controller
             'role_id' => 3,
             'active' => true
         ]);
+    //pull request de prueba
 
         return $this->success(new UserResource($user),
             'Usuario registrado correctamente',
