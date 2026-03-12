@@ -23,12 +23,13 @@ Route::post('/login', [ApiAuthController::class, 'login']);
 
 
 // RUTA SOLO ADMIN
-Route::middleware(['auth:sanctum','role:1'])->get('/admin', function () {
-    return response()->json([
-        'message' => 'Bienvenido admin'
-    ]);
+Route::middleware(['auth:sanctum','role:1'])->group(function () {
+    Route::get('/admin', function () {
+        return response()->json(['message' => 'Bienvenido admin']);
+    });
+    Route::post('/admin/users', [UserController::class, 'create']);
+    Route::get('/admin/users', [UserController::class, 'index']);
 });
-
 
 // RUTA SOLO EMPLEADO
 Route::middleware(['auth:sanctum','role:2'])->get('/empleado', function () {
@@ -38,7 +39,7 @@ Route::middleware(['auth:sanctum','role:2'])->get('/empleado', function () {
 });
 
 
-// ✅ RUTAS PERFIL EMPLEADO
+// RUTAS PERFIL EMPLEADO
 Route::middleware(['auth:sanctum','role:2'])->group(function () {
 
     Route::get('/empleado/profile', [EmpleadoController::class,'profile']);

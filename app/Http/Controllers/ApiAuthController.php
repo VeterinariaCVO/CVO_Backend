@@ -65,8 +65,7 @@ class ApiAuthController extends Controller
             );
         }
 
-        public
-        function logout()
+        public function logout()
         {
             auth()->user()->currentAccessToken()->delete();
 
