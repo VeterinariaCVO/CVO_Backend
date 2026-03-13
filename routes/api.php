@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\WorkingDayController;
 use App\Http\Controllers\TimeSlotController;
+use App\Http\Controllers\PetController;
 
 
 Route::get('/user', function (Request $request) {
@@ -70,3 +71,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('time-slots', TimeSlotController::class);
     Route::apiResource('appointments', AppointmentController::class);
 });
+
+//pets
+Route::get('/pets', [PetController::class, 'index']); // Listar y buscar
+Route::post('/pets', [PetController::class, 'store']);
+Route::put('/pets/{id}', [PetController::class, 'update']);
+Route::delete('/pets/{id}', [PetController::class, 'destroy']);
