@@ -2,26 +2,33 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @mixin Appointment */
 class AppointmentResource extends JsonResource
 {
-    public function toArray(Request $request)
+    public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
-            'client_id' => $this->client_id,
-            'pet_id' => $this->pet_id,
-            'service_id' => $this->service_id,
-            'block_id' => $this->block_id,
-            'date' => $this->date,
-            'reason' => $this->reason,
-            'active' => $this->active,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'pet' => [
+                'id' => $this->pet->id,
+                'name' => $this->pet->name
+            ],
+            'client' => [
+                'id' => $this->pet->client->id,
+                'name' => $this->pet->client->name,
+                'phone' => $this->pet->client->phone
+            ],
+            'service' => $this->service,
+            'time_slot' => [
+                'date' => $this->timeSlot->workingDay->date,
+                'start_time' => $this->timeSlot->start_time,
+                'end_time' => $this->timeSlot->end_time
+            ],
+            'status' => $this->status,
+            'notes' => $this->notes,
+            'created_by' => $this->creator->name
         ];
     }
 }
