@@ -10,12 +10,22 @@ return new class extends Migration
     {
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pet_id')->constrained('pets')->cascadeOnDelete();
-            $table->foreignId('service_id')->constrained('services')->cascadeOnDelete();
+            $table->foreignId('pet_id')->constrained()->cascadeOnDelete();
             $table->foreignId('time_slot_id')->constrained('time_slots')->cascadeOnDelete();
-            $table->enum('status', ['pending', 'confirmed', 'completed', 'cancelled'])->default('pending');
+            $table->enum('service', [
+                'medical',
+                'daycare',
+                'surgery',
+                'vaccination'
+            ]);
+            $table->enum('status', [
+                'pending',
+                'confirmed',
+                'completed',
+                'cancelled'
+            ])->default('pending');
             $table->text('notes')->nullable();
-            $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
         });
     }

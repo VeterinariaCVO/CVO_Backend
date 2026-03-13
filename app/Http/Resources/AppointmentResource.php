@@ -11,11 +11,24 @@ class AppointmentResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'pet_id' => $this->pet_id,
-            'service_id' => $this->service_id,
-            'time_slot_id' => $this->time_slot_id,
+            'pet' => [
+                'id' => $this->pet->id,
+                'name' => $this->pet->name
+            ],
+            'client' => [
+                'id' => $this->pet->client->id,
+                'name' => $this->pet->client->name,
+                'phone' => $this->pet->client->phone
+            ],
+            'service' => $this->service,
+            'time_slot' => [
+                'date' => $this->timeSlot->workingDay->date,
+                'start_time' => $this->timeSlot->start_time,
+                'end_time' => $this->timeSlot->end_time
+            ],
             'status' => $this->status,
-            'notes' => $this->notes
+            'notes' => $this->notes,
+            'created_by' => $this->creator->name
         ];
     }
 }
