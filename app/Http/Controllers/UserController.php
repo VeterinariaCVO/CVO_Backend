@@ -58,8 +58,12 @@ class UserController extends Controller
             'role_id' => 'required|in:2,3',
             'phone'   => 'nullable|string|max:20',
             'address' => 'nullable|string|max:255',
-            'active'  => 'boolean',
+            'active'  => 'nullable|boolean',
         ]);
+
+        if ($request->has('active')) {
+            $data['active'] = filter_var($request->active, FILTER_VALIDATE_BOOLEAN);
+        }
 
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
@@ -70,8 +74,8 @@ class UserController extends Controller
         return response()->json([
             'message' => 'Usuario actualizado correctamente',
             'user'    => new UserResource($user->load('role'))
-        ]);
-    }
+    ]);
+    }   
 
     public function destroy(string $id)
     {

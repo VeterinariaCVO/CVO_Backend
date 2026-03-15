@@ -28,12 +28,12 @@ Route::post('/login', [ApiAuthController::class, 'login']);
 
 
 // RUTA SOLO ADMIN
-Route::middleware(['auth:sanctum','role:1'])->group(function () {
-    Route::get('/admin', function () {
-        return response()->json(['message' => 'Bienvenido admin']);
-    });
-    Route::post('/admin/users', [UserController::class, 'create']);
-    Route::get('/admin/users', [UserController::class, 'index']);
+Route::middleware(['auth:sanctum', 'role:1'])->group(function () {
+    Route::get('/admin/users',         [UserController::class, 'index']);
+    Route::post('/admin/users',        [UserController::class, 'create']);
+    Route::get('/admin/users/{id}',    [UserController::class, 'show']);
+    Route::put('/admin/users/{id}',    [UserController::class, 'update']);
+    Route::delete('/admin/users/{id}', [UserController::class, 'destroy']);
 });
 
 // RUTA SOLO EMPLEADO
