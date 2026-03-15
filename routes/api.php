@@ -72,7 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('appointments', AppointmentController::class);
 });
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'role:1'])->group(function () {
     Route::get('/pets', [PetController::class, 'index']);
     Route::get('/pets/{id}', [PetController::class, 'show']);
     Route::post('/pets', [PetController::class, 'store']);
