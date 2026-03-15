@@ -72,8 +72,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('appointments', AppointmentController::class);
 });
 
-//pets
-Route::get('/pets', [PetController::class, 'index']); // Listar y buscar
-Route::post('/pets', [PetController::class, 'store']);
-Route::put('/pets/{id}', [PetController::class, 'update']);
-Route::delete('/pets/{id}', [PetController::class, 'destroy']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/pets', [PetController::class, 'index']);
+    Route::get('/pets/{id}', [PetController::class, 'show']);
+    Route::post('/pets', [PetController::class, 'store']);
+    Route::put('/pets/{id}', [PetController::class, 'update']);
+    Route::delete('/pets/{id}', [PetController::class, 'destroy']);
+});
