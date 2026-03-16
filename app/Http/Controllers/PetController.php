@@ -5,38 +5,49 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use App\Http\Requests\PetRequest;
+use App\Http\Resources\PetResource;
 use App\Models\Pet;
 
 class PetController extends Controller
 {
-    // Mostrar todas las mascotas con buscador opcional
+    // Mostrar mascotas (admin y empleado ven todas, cliente solo las suyas)
     public function index(Request $request)
     {
-        $query = Pet::query();
+        $user = auth()->user();
+
+        $query = in_array($user->role_id, [1, 2])
+            ? Pet::query()
+            : Pet::where('owner_id', $user->id);
 
         if ($request->has('search')) {
             $query->where('name', 'LIKE', '%' . $request->search . '%');
         }
 
-        return response()->json($query->get());
+        return response()->json(PetResource::collection($query->get()));
     }
 
-    // Crear nueva mascota
-    public function store(Request $request)
+    // Ver una mascota
+    public function show($id)
     {
-        $data = $request->validate([
-            'name'          => 'required|string|max:255',
-            'species'       => 'required|string',
-            'breed'         => 'nullable|string',
-            'color'         => 'nullable|string',
-            'special_marks' => 'nullable|string',
-            'weight'        => 'nullable|numeric',
-            'sex'           => 'required|in:male,female',
-            'age'           => 'nullable|integer',
-            'photo'         => 'nullable|image|mimes:jpeg,png|max:5000',
-            'owner_id'      => 'required|integer',
-            'active'        => 'nullable|boolean',
-        ]);
+        $user = auth()->user();
+
+        $pet = in_array($user->role_id, [1, 2])
+            ? Pet::findOrFail($id)
+            : Pet::where('id', $id)->where('owner_id', $user->id)->firstOrFail();
+
+        return response()->json(new PetResource($pet));
+    }
+
+    // Crear mascota (admin y empleado asignan owner_id, cliente se asigna solo)
+    public function store(PetRequest $request)
+    {
+        $user = auth()->user();
+        $data = $request->validated();
+
+        if (!in_array($user->role_id, [1, 2])) {
+            $data['owner_id'] = $user->id;
+        }
 
         if ($request->hasFile('photo')) {
             $data['photo_path'] = $request->file('photo')->store('pets', 'public');
@@ -44,26 +55,22 @@ class PetController extends Controller
 
         $pet = Pet::create($data);
 
-        return response()->json(['message' => 'Mascota creada exitosamente', 'pet' => $pet], 201);
+        return response()->json([
+            'message' => 'Mascota creada exitosamente',
+            'pet'     => new PetResource($pet)
+        ], 201);
     }
 
     // Actualizar mascota
-    public function update(Request $request, $id)
+    public function update(PetRequest $request, $id)
     {
-        $pet = Pet::findOrFail($id);
+        $user = auth()->user();
 
-        $data = $request->validate([
-            'name'          => 'required|string|max:255',
-            'species'       => 'required|string',
-            'breed'         => 'nullable|string',
-            'color'         => 'nullable|string',
-            'special_marks' => 'nullable|string',
-            'weight'        => 'nullable|numeric',
-            'sex'           => 'required|in:male,female',
-            'age'           => 'nullable|integer',
-            'photo'         => 'nullable|image|mimes:jpeg,png|max:5000',
-            'active'        => 'nullable|boolean',
-        ]);
+        $pet = in_array($user->role_id, [1, 2])
+            ? Pet::findOrFail($id)
+            : Pet::where('id', $id)->where('owner_id', $user->id)->firstOrFail();
+
+        $data = $request->validated();
 
         if ($request->hasFile('photo')) {
             if ($pet->photo_path) {
@@ -74,13 +81,20 @@ class PetController extends Controller
 
         $pet->update($data);
 
-        return response()->json(['message' => 'Mascota actualizada exitosamente', 'pet' => $pet]);
+        return response()->json([
+            'message' => 'Mascota actualizada exitosamente',
+            'pet'     => new PetResource($pet)
+        ]);
     }
 
     // Eliminar mascota
     public function destroy($id)
     {
-        $pet = Pet::findOrFail($id);
+        $user = auth()->user();
+
+        $pet = in_array($user->role_id, [1, 2])
+            ? Pet::findOrFail($id)
+            : Pet::where('id', $id)->where('owner_id', $user->id)->firstOrFail();
 
         if ($pet->photo_path) {
             Storage::delete('public/' . $pet->photo_path);
