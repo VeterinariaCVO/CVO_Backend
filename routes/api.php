@@ -23,18 +23,27 @@ Route::middleware('auth:sanctum')->post('/logout', [ApiAuthController::class, 'l
 
 // RUTAS ADMIN
 Route::middleware(['auth:sanctum', 'role:1'])->group(function () {
+
+    // Usuarios
     Route::get('/admin/users',         [UserController::class, 'index']);
     Route::post('/admin/users',        [UserController::class, 'create']);
     Route::get('/admin/users/{id}',    [UserController::class, 'show']);
     Route::put('/admin/users/{id}',    [UserController::class, 'update']);
     Route::delete('/admin/users/{id}', [UserController::class, 'destroy']);
 
+    // Empleados
+    Route::get('/admin/employees',         [UserController::class, 'employees']);
+    Route::post('/admin/employees',        [UserController::class, 'create']);
+    Route::get('/admin/employees/{id}',    [UserController::class, 'showEmployee']);
+    Route::put('/admin/employees/{id}',    [UserController::class, 'update']);
+    Route::delete('/admin/employees/{id}', [UserController::class, 'destroy']);
+
     // Mascotas - admin
-    Route::get('/pets',        [PetController::class, 'index']);
-    Route::get('/pets/{id}',   [PetController::class, 'show']);
-    Route::post('/pets',       [PetController::class, 'store']);
-    Route::put('/pets/{id}',   [PetController::class, 'update']);
-    Route::delete('/pets/{id}',[PetController::class, 'destroy']);
+    Route::get('/pets',         [PetController::class, 'index']);
+    Route::get('/pets/{id}',    [PetController::class, 'show']);
+    Route::post('/pets',        [PetController::class, 'store']);
+    Route::put('/pets/{id}',    [PetController::class, 'update']);
+    Route::delete('/pets/{id}', [PetController::class, 'destroy']);
 });
 
 // RUTAS EMPLEADO
