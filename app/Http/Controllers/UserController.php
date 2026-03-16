@@ -77,6 +77,25 @@ class UserController extends Controller
     ]);
     }   
 
+    // Listar solo clientes
+    public function clients()
+    {
+        $clients = User::with('role')->where('role_id', 3)->get();
+        return response()->json([
+            'clients' => UserResource::collection($clients)
+        ]);
+    }   
+
+    // Ver cliente con sus mascotas
+    public function showClient(string $id)
+    {
+        $client = User::with(['role', 'pets'])->findOrFail($id);
+        return response()->json([
+            'client' => new UserResource($client),
+            'pets'   => $client->pets
+        ]);
+    }
+
     public function destroy(string $id)
     {
         $user = User::findOrFail($id);

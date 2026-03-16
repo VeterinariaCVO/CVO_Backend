@@ -6,22 +6,31 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\Pet;
+use App\Models\User;
 
 class PetController extends Controller
 {
-    // Mostrar todas las mascotas con buscador opcional
     public function index(Request $request)
     {
         $query = Pet::query();
+
+        if ($request->has('owner_id')) {
+            $query->where('owner_id', $request->owner_id);
+        }
 
         if ($request->has('search')) {
             $query->where('name', 'LIKE', '%' . $request->search . '%');
         }
 
-        return response()->json($query->get());
+        return response()->json(['pets' => $query->get()]);
     }
 
-    // Crear nueva mascota
+    public function show($id)
+    {
+        $pet = Pet::findOrFail($id);
+        return response()->json(['pet' => $pet]);
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -34,7 +43,7 @@ class PetController extends Controller
             'sex'           => 'required|in:male,female',
             'age'           => 'nullable|integer',
             'photo'         => 'nullable|image|mimes:jpeg,png|max:5000',
-            'owner_id'      => 'required|integer',
+            'owner_id'      => 'required|integer|exists:users,id',
             'active'        => 'nullable|boolean',
         ]);
 
@@ -44,10 +53,12 @@ class PetController extends Controller
 
         $pet = Pet::create($data);
 
-        return response()->json(['message' => 'Mascota creada exitosamente', 'pet' => $pet], 201);
+        return response()->json([
+            'message' => 'Mascota registrada exitosamente',
+            'pet'     => $pet
+        ], 201);
     }
 
-    // Actualizar mascota
     public function update(Request $request, $id)
     {
         $pet = Pet::findOrFail($id);
@@ -74,10 +85,12 @@ class PetController extends Controller
 
         $pet->update($data);
 
-        return response()->json(['message' => 'Mascota actualizada exitosamente', 'pet' => $pet]);
+        return response()->json([
+            'message' => 'Mascota actualizada exitosamente',
+            'pet'     => $pet
+        ]);
     }
 
-    // Eliminar mascota
     public function destroy($id)
     {
         $pet = Pet::findOrFail($id);
