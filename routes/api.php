@@ -72,10 +72,28 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('appointments', AppointmentController::class);
 });
 
+// Admin y empleado - gestionan todas las mascotas
 Route::middleware(['auth:sanctum', 'role:1'])->group(function () {
     Route::get('/pets', [PetController::class, 'index']);
     Route::get('/pets/{id}', [PetController::class, 'show']);
     Route::post('/pets', [PetController::class, 'store']);
     Route::put('/pets/{id}', [PetController::class, 'update']);
     Route::delete('/pets/{id}', [PetController::class, 'destroy']);
+});
+
+Route::middleware(['auth:sanctum', 'role:2'])->group(function () {
+    Route::get('/pets', [PetController::class, 'index']);
+    Route::get('/pets/{id}', [PetController::class, 'show']);
+    Route::post('/pets', [PetController::class, 'store']);
+    Route::put('/pets/{id}', [PetController::class, 'update']);
+    Route::delete('/pets/{id}', [PetController::class, 'destroy']);
+});
+
+// Cliente - gestiona solo sus mascotas
+Route::middleware(['auth:sanctum', 'role:3'])->group(function () {
+    Route::get('/mis-mascotas', [PetController::class, 'index']);
+    Route::get('/mis-mascotas/{id}', [PetController::class, 'show']);
+    Route::post('/mis-mascotas', [PetController::class, 'store']);
+    Route::put('/mis-mascotas/{id}', [PetController::class, 'update']);
+    Route::delete('/mis-mascotas/{id}', [PetController::class, 'destroy']);
 });
