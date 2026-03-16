@@ -22,7 +22,7 @@ class PetController extends Controller
         return response()->json(PetResource::collection($query->get()));
     }
 
-    // Mostrar una mascota
+    // Mostrar una mascota por id
     public function show($id)
     {
         $pet = Pet::findOrFail($id);
