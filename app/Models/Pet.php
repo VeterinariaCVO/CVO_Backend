@@ -11,7 +11,7 @@ class Pet extends Model
         'weight', 'sex', 'age', 'photo_path', 'owner_id', 'active'
     ];
 
-    public function owner(): BelongsTo
+    public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');
     }

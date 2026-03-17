@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pet;
 use Illuminate\Http\Request;
 
 class PetController extends Controller
@@ -20,7 +21,7 @@ class PetController extends Controller
     // Formulario para agregar del anterior proyecto
     public function create()
     {
-        // 
+        //
         //vista anterior proyecto en blade: return view('cliente.registro_mascota');
     }
 
@@ -66,7 +67,7 @@ class PetController extends Controller
     // Formulario editar
     public function edit($id)
     {
-        //esto sirve para 
+        //esto sirve para
         $pet = Pet::findOrFail($id);
         if ($pet->owner_id !== Auth::id()) {
             abort(403);
@@ -77,7 +78,7 @@ class PetController extends Controller
     // Actualizar mascota
     public function update(Request $request, $id)
     {
-        
+
         $pet = Pet::findOrFail($id);
         if ($pet->owner_id !== Auth::id()) {
             abort(403);
@@ -97,7 +98,7 @@ class PetController extends Controller
         ]);
 
         if ($request->hasFile('photo')) {
-            
+
             if ($pet->photo_path) {
                 Storage::delete('public/' . $pet->photo_path);
             }
@@ -130,14 +131,14 @@ class PetController extends Controller
     /*public function apiIndex()
     {
 
-        
+
         $pets = Pet::all(); // Quita el where para básico – ahora retorna todo
     return response()->json($pets);
         /*
         $pets = Pet::where('owner_id', Auth::id())->get();
         return response()->json($pets);
     }*/
-/*  
+/*
 
 
 
@@ -145,10 +146,10 @@ class PetController extends Controller
 
 
 
-    public function apiIndex(Request $request) 
+    public function apiIndex(Request $request)
 {
     $userId = $request->query('user_id');
-    $pets = $userId ? Pet::where('owner_id', $userId)->get() : Pet::all(); 
+    $pets = $userId ? Pet::where('owner_id', $userId)->get() : Pet::all();
     return response()->json($pets);
 }
 public function apiStore(Request $request)
@@ -157,13 +158,13 @@ public function apiStore(Request $request)
         'name' => 'required|string',
         'species' => 'required|string',
         'sex' => 'required|in:male,female',
-        
+
     ]);
-    $data['owner_id'] = 1; 
+    $data['owner_id'] = 1;
     Pet::create($data);
     return response()->json(['message' => 'Mascota agregada'], 201);
 }
-    
+
 public function apiBySex($sex)
 {
     $pets = Pet::where('sex', $sex)->get();

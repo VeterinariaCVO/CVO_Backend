@@ -11,7 +11,18 @@ use App\Http\Resources\AppointmentResource;
 
 class AppointmentController extends Controller
 {
+    // Sin restricciones, solo para probar vista
+    public function index()
+    {
+        $appointments = Appointment::with([
+            'pet.owner',
+            'timeSlot.workingDay',
+            'creator'
+        ])->get();
 
+        return AppointmentResource::collection($appointments);
+    }
+    /* Este es el bueno, tiene restricciones
     public function index()
     {
         $user = Auth::user();
@@ -33,6 +44,7 @@ class AppointmentController extends Controller
         }
         return AppointmentResource::collection($appointments);
     }
+    */
 
 
     public function store(AppointmentRequest $request)
