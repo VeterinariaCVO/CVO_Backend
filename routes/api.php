@@ -5,11 +5,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\AppointmentController;
-use App\Http\Controllers\WorkingDayController;
-use App\Http\Controllers\TimeSlotController;
-use App\Http\Controllers\PetController;
-
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -64,12 +59,3 @@ Route::middleware(['auth:sanctum','role:3'])->get('/cliente', function () {
 
 // LOGOUT
 Route::middleware('auth:sanctum')->post('/logout', [ApiAuthController::class, 'logout']);
-
-// Appointments
-// Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('working-days', WorkingDayController::class);
-    Route::apiResource('time-slots', TimeSlotController::class);
-    Route::apiResource('appointments', AppointmentController::class);
-// });
-
-Route::apiResource('pets', PetController::class);
