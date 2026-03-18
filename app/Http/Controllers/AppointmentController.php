@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Appointment;
 use App\Models\TimeSlot;
 use Illuminate\Support\Facades\Auth;
-
 use App\Http\Requests\AppointmentRequest;
 use App\Http\Resources\AppointmentResource;
 
