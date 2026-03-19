@@ -1,84 +1,29 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Resources;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Storage;
-use App\Http\Requests\PetRequest;
-use App\Http\Resources\PetResource;
-use App\Models\Pet;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class PetController extends Controller
+class PetResource extends JsonResource
 {
-    // Mostrar todas las mascotas con buscador opcional
-    public function index(Request $request)
+    public function toArray($request): array
     {
-        $query = Pet::query();
-
-        if ($request->has('search')) {
-            $query->where('name', 'LIKE', '%' . $request->search . '%');
-        }
-
-        return response()->json(PetResource::collection($query->get()));
-    }
-
-    // Mostrar una mascota por id
-    public function show($id)
-    {
-        $pet = Pet::findOrFail($id);
-        return response()->json(new PetResource($pet));
-    }
-
-    // Crear nueva mascota
-    public function store(PetRequest $request)
-    {
-        $data = $request->validated();
-
-        if ($request->hasFile('photo')) {
-            $data['photo_path'] = $request->file('photo')->store('pets', 'public');
-        }
-
-        $pet = Pet::create($data);
-
-        return response()->json([
-            'message' => 'Mascota creada exitosamente',
-            'pet'     => new PetResource($pet)
-        ], 201);
-    }
-
-    // Actualizar mascota
-    public function update(PetRequest $request, $id)
-    {
-        $pet = Pet::findOrFail($id);
-
-        $data = $request->validated();
-
-        if ($request->hasFile('photo')) {
-            if ($pet->photo_path) {
-                Storage::delete('public/' . $pet->photo_path);
-            }
-            $data['photo_path'] = $request->file('photo')->store('pets', 'public');
-        }
-
-        $pet->update($data);
-
-        return response()->json([
-            'message' => 'Mascota actualizada exitosamente',
-            'pet'     => new PetResource($pet)
-        ]);
-    }
-
-    // Eliminar mascota
-    public function destroy($id)
-    {
-        $pet = Pet::findOrFail($id);
-
-        if ($pet->photo_path) {
-            Storage::delete('public/' . $pet->photo_path);
-        }
-
-        $pet->delete();
-
-        return response()->json(['message' => 'Mascota eliminada exitosamente']);
+        return [
+            'id'            => $this->id,
+            'name'          => $this->name,
+            'species'       => $this->species,
+            'breed'         => $this->breed,
+            'color'         => $this->color,
+            'special_marks' => $this->special_marks,
+            'weight'        => $this->weight,
+            'sex'           => $this->sex,
+            'age'           => $this->age,
+            'photo_url'     => $this->photo_path
+                                ? asset('storage/' . $this->photo_path)
+                                : null,
+            'owner_id'      => $this->owner_id,
+            'active'        => $this->active,
+            'created_at'    => $this->created_at->format('Y-m-d'),
+        ];
     }
 }
