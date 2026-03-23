@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\TimeSlot;
+use App\Models\Service;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\AppointmentRequest;
 use App\Http\Resources\AppointmentResource;
@@ -17,6 +18,7 @@ class AppointmentController extends Controller
 
         $query = Appointment::with([
             'pet',
+            'service',
             'timeSlot.workingDay',
             'creator'
         ]);
@@ -54,7 +56,7 @@ class AppointmentController extends Controller
         $appointment = Appointment::create([
             'pet_id' => $request->pet_id,
             'time_slot_id' => $request->time_slot_id,
-            'service' => $request->service,
+            'service_id' => $request->service_id,
             'status' => 'pending',
             'notes' => $request->notes,
             'created_by' => Auth::id() ?? 1
@@ -64,13 +66,14 @@ class AppointmentController extends Controller
             'status' => 'reserved'
         ]);
 
-        return new AppointmentResource($appointment);
+        return new AppointmentResource($appointment->load('service'));
     }
 
     public function show($id)
     {
         $appointment = Appointment::with([
             'pet.client',
+            'service',
             'timeSlot.workingDay',
             'creator'
         ])->findOrFail($id);
@@ -105,11 +108,11 @@ class AppointmentController extends Controller
         $appointment->update([
             'pet_id' => $request->pet_id,
             'time_slot_id' => $request->time_slot_id,
-            'service' => $request->service,
+            'service_id' => $request->service_id,
             'notes' => $request->notes
         ]);
 
-        return new AppointmentResource($appointment);
+        return new AppointmentResource($appointment->load('service'));
     }
 
     public function destroy($id)
