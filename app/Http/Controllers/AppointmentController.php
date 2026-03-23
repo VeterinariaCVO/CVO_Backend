@@ -7,52 +7,47 @@ use App\Models\TimeSlot;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\AppointmentRequest;
 use App\Http\Resources\AppointmentResource;
+use Carbon\Carbon;
 
 class AppointmentController extends Controller
 {
-    // Sin restricciones, solo para probar vista
-    public function index()
-    {
-        $appointments = Appointment::with([
-            'pet.owner',
-            'timeSlot.workingDay',
-            'creator'
-        ])->get();
-
-        return AppointmentResource::collection($appointments);
-    }
-    /* Este es el bueno, tiene restricciones
     public function index()
     {
         $user = Auth::user();
-        // Cliente
-        if ($user->role_id === 3) {
-            $appointments = Appointment::whereHas('pet', function ($query) use ($user) {
-                $query->where('client_id', $user->id);
-            })->with([
-                    'pet.client',
-                    'timeSlot.workingDay',
-                    'creator'
-                ])->get();
-         } else {
-            $appointments = Appointment::with([
-                'pet.client',
-                'timeSlot.workingDay',
-                'creator'
-            ])->get();
-        }
-        return AppointmentResource::collection($appointments);
-    }
-    */
 
+        $query = Appointment::with([
+            'pet',
+            'timeSlot.workingDay',
+            'creator'
+        ]);
+
+        if ($user->role_id === 3) {
+            $query->whereHas('pet', function ($q) use ($user) {
+                $q->where('owner_id', $user->id);
+            });
+        }
+
+        if (request()->has('status')) {
+            $query->where('status', request('status'));
+        }
+
+        return AppointmentResource::collection($query->get());
+    }
 
     public function store(AppointmentRequest $request)
     {
-        $slot = TimeSlot::findOrFail($request->time_slot_id);
+        $slot = TimeSlot::with('workingDay')->findOrFail($request->time_slot_id);
 
         if ($slot->status === 'reserved') {
             return response()->json([
                 'message' => 'Horario no disponible'
+            ], 400);
+        }
+
+        $fecha = $slot->workingDay->date;
+        if (Carbon::parse($fecha)->isToday()) {
+            return response()->json([
+                'message' => 'Debes agendar con al menos 1 día de anticipacion'
             ], 400);
         }
 
@@ -62,7 +57,7 @@ class AppointmentController extends Controller
             'service' => $request->service,
             'status' => 'pending',
             'notes' => $request->notes,
-            'created_by' => Auth::id()
+            'created_by' => Auth::id() ?? 1
         ]);
 
         $slot->update([
@@ -71,7 +66,6 @@ class AppointmentController extends Controller
 
         return new AppointmentResource($appointment);
     }
-
 
     public function show($id)
     {
@@ -84,12 +78,11 @@ class AppointmentController extends Controller
         return new AppointmentResource($appointment);
     }
 
-
     public function update(AppointmentRequest $request, $id)
     {
         $appointment = Appointment::findOrFail($id);
 
-        $newSlot = TimeSlot::findOrFail($request->time_slot_id);
+        $newSlot = TimeSlot::with('workingDay')->findOrFail($request->time_slot_id);
 
         if ($newSlot->status === 'reserved') {
             return response()->json([
@@ -97,15 +90,17 @@ class AppointmentController extends Controller
             ], 400);
         }
 
+        $fecha = $newSlot->workingDay->date;
+        if (Carbon::parse($fecha)->isToday()) {
+            return response()->json([
+                'message' => 'Debes reagendar con al menos 1 día de anticipacion'
+            ], 400);
+        }
+
         $oldSlot = TimeSlot::findOrFail($appointment->time_slot_id);
+        $oldSlot->update(['status' => 'available']);
 
-        $oldSlot->update([
-            'status' => 'available'
-        ]);
-
-        $newSlot->update([
-            'status' => 'reserved'
-        ]);
+        $newSlot->update(['status' => 'reserved']);
 
         $appointment->update([
             'pet_id' => $request->pet_id,
@@ -116,7 +111,6 @@ class AppointmentController extends Controller
 
         return new AppointmentResource($appointment);
     }
-
 
     public function destroy($id)
     {
@@ -136,5 +130,4 @@ class AppointmentController extends Controller
             'message' => 'Cita cancelada correctamente'
         ]);
     }
-
 }

@@ -7,28 +7,29 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class AppointmentResource extends JsonResource
 {
-    public function toArray(Request $request): array
+    public function toArray($request)
     {
         return [
             'id' => $this->id,
+            'service' => $this->service,
+            'status' => $this->status,
+
             'pet' => [
                 'id' => $this->pet->id,
-                'name' => $this->pet->name
+                'name' => $this->pet->name,
             ],
+
             'client' => [
                 'id' => $this->pet->owner->id,
                 'name' => $this->pet->owner->name,
-                'phone' => $this->pet->owner->phone
+                'phone' => $this->pet->owner->phone,
             ],
-            'service' => $this->service,
+
             'time_slot' => [
                 'date' => $this->timeSlot->workingDay->date,
                 'start_time' => $this->timeSlot->start_time,
-                'end_time' => $this->timeSlot->end_time
+                'end_time' => $this->timeSlot->end_time,
             ],
-            'status' => $this->status,
-            'notes' => $this->notes,
-            'created_by' => $this->creator->name
         ];
     }
 }
