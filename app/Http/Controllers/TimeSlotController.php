@@ -2,19 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\TimeSlot;
 use App\Http\Requests\TimeSlotRequest;
 use App\Http\Resources\TimeSlotResource;
+use Carbon\Carbon;
 
 class TimeSlotController extends Controller
 {
     public function index()
     {
-        return TimeSlotResource::collection(
-            TimeSlot::with('workingDay')->get()
-        );
+        $slots = TimeSlot::with('workingDay')
+            ->where('status', 'available')
+            ->whereHas('workingDay', function ($query) {
+                $query->where('is_open', 1)
+                ->whereDate('date', '>', Carbon::today());
+            })
+            ->get();
+
+        return TimeSlotResource::collection($slots);
     }
 
     public function store(TimeSlotRequest $request)

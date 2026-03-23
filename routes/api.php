@@ -25,7 +25,7 @@ Route::middleware('auth:sanctum')->post('/logout', [ApiAuthController::class, 'l
 Route::middleware(['auth:sanctum', 'role:1'])->group(function () {
 
     // Usuarios
-    Route::get('/admin/users',         [UserController::class, 'index']);
+
     Route::post('/admin/users',        [UserController::class, 'create']);
     Route::get('/admin/users/{id}',    [UserController::class, 'show']);
     Route::put('/admin/users/{id}',    [UserController::class, 'update']);
@@ -39,7 +39,7 @@ Route::middleware(['auth:sanctum', 'role:1'])->group(function () {
     Route::delete('/admin/employees/{id}', [UserController::class, 'destroy']);
 
     // Mascotas - admin
-    Route::get('/pets',         [PetController::class, 'index']);
+
     Route::get('/pets/{id}',    [PetController::class, 'show']);
     Route::post('/pets',        [PetController::class, 'store']);
     Route::put('/pets/{id}',    [PetController::class, 'update']);
@@ -84,3 +84,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('time-slots',    TimeSlotController::class);
     Route::apiResource('appointments',  AppointmentController::class);
 });
+
+Route::get('/users',         [UserController::class, 'index']);
+Route::get('/admin/users',         [UserController::class, 'index']);
+Route::get('/pets',         [PetController::class, 'index']);

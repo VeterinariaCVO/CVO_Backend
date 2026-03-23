@@ -2,17 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\Pet;
-use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class PetController extends Controller
 {
     public function index(Request $request)
     {
+        $user = Auth::user();
+
         $query = Pet::query();
+
+        if ($user->role_id === 3) {
+            $query->where('owner_id', $user->id);
+        }
 
         if ($request->has('owner_id')) {
             $query->where('owner_id', $request->owner_id);
