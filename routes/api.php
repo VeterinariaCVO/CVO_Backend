@@ -9,6 +9,8 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\WorkingDayController;
 use App\Http\Controllers\TimeSlotController;
 use App\Http\Controllers\PetController;
+use App\Http\Controllers\ServiceController;
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -84,6 +86,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('time-slots',    TimeSlotController::class);
     Route::apiResource('appointments',  AppointmentController::class);
 });
+
+// Services
+Route::middleware(['auth:sanctum', 'role:1'])->group(function () {
+    Route::post('/service',        [ServiceController::class, 'store']);
+    Route::put('/service/{id}',    [ServiceController::class, 'update']);
+    Route::delete('/service/{id}', [ServiceController::class, 'destroy']);
+});
+Route::get('/service',         [ServiceController::class, 'index']);
+Route::get('/service/{id}',    [ServiceController::class, 'show']);
+
+
 
 Route::get('/users',         [UserController::class, 'index']);
 Route::get('/admin/users',         [UserController::class, 'index']);
