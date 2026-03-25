@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Http\Request;
+use App\Http\Requests\PetRequest;
+use App\Http\Resources\PetResource;
 use App\Models\Pet;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,30 +28,20 @@ class PetController extends Controller
             $query->where('name', 'LIKE', '%' . $request->search . '%');
         }
 
-        return response()->json(['pets' => $query->get()]);
+        return response()->json(PetResource::collection($query->get()));
     }
 
+    // Mostrar una mascota por id
     public function show($id)
     {
         $pet = Pet::findOrFail($id);
-        return response()->json(['pet' => $pet]);
+        return response()->json(new PetResource($pet));
     }
 
-    public function store(Request $request)
+    // Crear nueva mascota
+    public function store(PetRequest $request)
     {
-        $data = $request->validate([
-            'name'          => 'required|string|max:255',
-            'species'       => 'required|string',
-            'breed'         => 'nullable|string',
-            'color'         => 'nullable|string',
-            'special_marks' => 'nullable|string',
-            'weight'        => 'nullable|numeric',
-            'sex'           => 'required|in:male,female',
-            'age'           => 'nullable|integer',
-            'photo'         => 'nullable|image|mimes:jpeg,png|max:5000',
-            'owner_id'      => 'required|integer|exists:users,id',
-            'active'        => 'nullable|boolean',
-        ]);
+        $data = $request->validated();
 
         if ($request->hasFile('photo')) {
             $data['photo_path'] = $request->file('photo')->store('pets', 'public');
@@ -59,27 +50,17 @@ class PetController extends Controller
         $pet = Pet::create($data);
 
         return response()->json([
-            'message' => 'Mascota registrada exitosamente',
-            'pet'     => $pet
+            'message' => 'Mascota creada exitosamente',
+            'pet'     => new PetResource($pet)
         ], 201);
     }
 
-    public function update(Request $request, $id)
+    // Actualizar mascota
+    public function update(PetRequest $request, $id)
     {
         $pet = Pet::findOrFail($id);
 
-        $data = $request->validate([
-            'name'          => 'required|string|max:255',
-            'species'       => 'required|string',
-            'breed'         => 'nullable|string',
-            'color'         => 'nullable|string',
-            'special_marks' => 'nullable|string',
-            'weight'        => 'nullable|numeric',
-            'sex'           => 'required|in:male,female',
-            'age'           => 'nullable|integer',
-            'photo'         => 'nullable|image|mimes:jpeg,png|max:5000',
-            'active'        => 'nullable|boolean',
-        ]);
+        $data = $request->validated();
 
         if ($request->hasFile('photo')) {
             if ($pet->photo_path) {
@@ -92,10 +73,11 @@ class PetController extends Controller
 
         return response()->json([
             'message' => 'Mascota actualizada exitosamente',
-            'pet'     => $pet
+            'pet'     => new PetResource($pet)
         ]);
     }
 
+    // Eliminar mascota
     public function destroy($id)
     {
         $pet = Pet::findOrFail($id);

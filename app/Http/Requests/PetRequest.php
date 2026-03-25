@@ -13,6 +13,8 @@ class PetRequest extends FormRequest
 
     public function rules(): array
     {
+        $user = auth()->user();
+
         return [
             'name'          => 'required|string|max:255',
             'species'       => 'required|string',
@@ -23,7 +25,7 @@ class PetRequest extends FormRequest
             'sex'           => 'required|in:male,female',
             'age'           => 'nullable|integer',
             'photo'         => 'nullable|image|mimes:jpeg,png|max:5000',
-            'owner_id'      => 'required|integer|exists:users,id',
+            'owner_id'      => in_array($user->role_id, [1, 2, 4]) ? 'required|integer|exists:users,id' : 'nullable',
             'active'        => 'nullable|boolean',
         ];
     }
