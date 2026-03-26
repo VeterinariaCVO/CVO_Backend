@@ -73,7 +73,7 @@ Route::middleware(['auth:sanctum', 'role:3'])->group(function () {
     Route::get('/cliente', function () {
         return response()->json(['message' => 'Bienvenido cliente']);
     });
-    Route::get('/cliente/perfil',        [UserController::class, 'show']);
+    Route::get('/cliente/perfil', [UserController::class, 'showPerfil']);
     Route::put('/cliente/perfil',        [UserController::class, 'updatePerfil']);
     Route::delete('/cliente/perfil',     [UserController::class, 'destroyPerfil']);
     Route::get('/mis-mascotas',         [PetController::class, 'index']);

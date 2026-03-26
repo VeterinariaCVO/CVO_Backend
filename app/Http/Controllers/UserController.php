@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -190,6 +191,14 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'Cuenta eliminada correctamente'
+        ]);
+    }
+    public function showPerfil()
+    {
+        $user = Auth::user();
+
+        return response()->json([
+            'user' => new UserResource($user->load('role'))
         ]);
     }
 }
