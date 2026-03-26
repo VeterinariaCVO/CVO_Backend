@@ -160,4 +160,27 @@ class UserController extends Controller
             'message' => 'Usuario eliminado correctamente'
         ]);
     }
+
+    public function updatePerfil(Request $request)
+    {
+        $user = Auth::user();
+
+        $data = $request->validate([
+            'name'     => 'sometimes|string|max:255',
+            'phone'    => 'sometimes|string|max:20',
+            'address'  => 'sometimes|string|max:255',
+            'password' => 'sometimes|string|min:4',
+        ]);
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
+
+        return response()->json([
+            'message' => 'Perfil actualizado correctamente',
+            'user'    => new UserResource($user)
+        ]);
+    }
 }
