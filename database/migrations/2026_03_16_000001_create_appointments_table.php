@@ -12,12 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pet_id')->constrained()->cascadeOnDelete();
             $table->foreignId('time_slot_id')->constrained('time_slots')->cascadeOnDelete();
-            $table->enum('service', [
-                'medical',
-                'daycare',
-                'surgery',
-                'vaccination'
-            ]);
+            $table->foreignId('service_id')->constrained()->cascadeOnDelete();
             $table->enum('status', [
                 'pending',
                 'confirmed',
@@ -25,7 +20,7 @@ return new class extends Migration
                 'cancelled'
             ])->default('pending');
             $table->text('notes')->nullable();
-            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('created_by')->nullable();
             $table->timestamps();
         });
     }

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Traits\ApiResponse;
 
 
+
 class ApiAuthController extends Controller
 {
     use ApiResponse;
@@ -72,4 +73,7 @@ class ApiAuthController extends Controller
 
             return $this->success('Sesión cerrada correctamente');
         }
+
+
+
 }

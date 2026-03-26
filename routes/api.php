@@ -9,6 +9,8 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\WorkingDayController;
 use App\Http\Controllers\TimeSlotController;
 use App\Http\Controllers\PetController;
+use App\Http\Controllers\ServiceController;
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -25,7 +27,7 @@ Route::middleware('auth:sanctum')->post('/logout', [ApiAuthController::class, 'l
 Route::middleware(['auth:sanctum', 'role:1'])->group(function () {
 
     // Usuarios
-    Route::get('/admin/users',         [UserController::class, 'index']);
+
     Route::post('/admin/users',        [UserController::class, 'create']);
     Route::get('/admin/users/{id}',    [UserController::class, 'show']);
     Route::put('/admin/users/{id}',    [UserController::class, 'update']);
@@ -39,7 +41,7 @@ Route::middleware(['auth:sanctum', 'role:1'])->group(function () {
     Route::delete('/admin/employees/{id}', [UserController::class, 'destroy']);
 
     // Mascotas - admin
-    Route::get('/pets',         [PetController::class, 'index']);
+
     Route::get('/pets/{id}',    [PetController::class, 'show']);
     Route::post('/pets',        [PetController::class, 'store']);
     Route::put('/pets/{id}',    [PetController::class, 'update']);
@@ -71,6 +73,9 @@ Route::middleware(['auth:sanctum', 'role:3'])->group(function () {
     Route::get('/cliente', function () {
         return response()->json(['message' => 'Bienvenido cliente']);
     });
+    Route::get('/cliente/perfil', [UserController::class, 'showPerfil']);
+    Route::put('/cliente/perfil',        [UserController::class, 'updatePerfil']);
+    Route::delete('/cliente/perfil',     [UserController::class, 'destroyPerfil']);
     Route::get('/mis-mascotas',         [PetController::class, 'index']);
     Route::get('/mis-mascotas/{id}',    [PetController::class, 'show']);
     Route::post('/mis-mascotas',        [PetController::class, 'store']);
@@ -84,3 +89,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('time-slots',    TimeSlotController::class);
     Route::apiResource('appointments',  AppointmentController::class);
 });
+
+// Services
+Route::middleware(['auth:sanctum', 'role:1'])->group(function () {
+    Route::post('/service',        [ServiceController::class, 'store']);
+    Route::put('/service/{id}',    [ServiceController::class, 'update']);
+    Route::delete('/service/{id}', [ServiceController::class, 'destroy']);
+});
+Route::get('/service',         [ServiceController::class, 'index']);
+Route::get('/service/{id}',    [ServiceController::class, 'show']);
+
+
+
+Route::get('/users',         [UserController::class, 'index']);
+Route::get('/admin/users',         [UserController::class, 'index']);
+Route::get('/pets',         [PetController::class, 'index']);

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+// gano el santos
 class Service extends Model
 {
     protected $fillable = [
@@ -16,5 +17,4 @@ class Service extends Model
     {
         return $this->hasMany(Appointment::class);
     }
-
 }

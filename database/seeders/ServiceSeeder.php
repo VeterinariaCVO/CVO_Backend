@@ -14,6 +14,7 @@ class ServiceSeeder extends Seeder
             ['name' => 'consultation','description' => 'Consulta general', 'active' => true],
             ['name' => 'vaccination','description' => 'Aplicación de vacuna', 'active' => true],
             ['name' => 'surgery','description' => 'Procedimiento quirúrgico', 'active' => true],
+            ['name' => 'ultrasound','description' => 'Ultrasonido', 'active' => true],
             ['name' => 'grooming','description' => 'Estética y baño', 'active' => true],
         ]);
     }

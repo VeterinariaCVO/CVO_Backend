@@ -2,19 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PetRequest;
 use App\Http\Resources\PetResource;
 use App\Models\Pet;
-use App\Models\User;
 
 class PetController extends Controller
 {
-    // Mostrar todas las mascotas con buscador opcional
     public function index(Request $request)
     {
+        $user = Auth::user();
+
         $query = Pet::query();
+
+        if ($user->role_id === 3) {
+            $query->where('owner_id', $user->id);
+        }
+
+        if ($request->has('owner_id')) {
+            $query->where('owner_id', $request->owner_id);
+        }
 
         if ($request->has('search')) {
             $query->where('name', 'LIKE', '%' . $request->search . '%');
@@ -23,14 +32,12 @@ class PetController extends Controller
         return response()->json(PetResource::collection($query->get()));
     }
 
-    // Mostrar una mascota por id
     public function show($id)
     {
         $pet = Pet::findOrFail($id);
         return response()->json(new PetResource($pet));
     }
 
-    // Crear nueva mascota
     public function store(PetRequest $request)
     {
         $data = $request->validated();
@@ -47,7 +54,6 @@ class PetController extends Controller
         ], 201);
     }
 
-    // Actualizar mascota
     public function update(PetRequest $request, $id)
     {
         $pet = Pet::findOrFail($id);
@@ -56,7 +62,8 @@ class PetController extends Controller
 
         if ($request->hasFile('photo')) {
             if ($pet->photo_path) {
-                Storage::delete('public/' . $pet->photo_path);
+
+                Storage::disk('public')->delete($pet->photo_path);
             }
             $data['photo_path'] = $request->file('photo')->store('pets', 'public');
         }
@@ -69,13 +76,13 @@ class PetController extends Controller
         ]);
     }
 
-    // Eliminar mascota
     public function destroy($id)
     {
         $pet = Pet::findOrFail($id);
 
         if ($pet->photo_path) {
-            Storage::delete('public/' . $pet->photo_path);
+
+            Storage::disk('public')->delete($pet->photo_path);
         }
 
         $pet->delete();

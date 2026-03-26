@@ -22,3 +22,12 @@ return new class extends Migration
         Schema::dropIfExists('services');
     }
 };
+
+
+// database/migrations/xxxx_create_consultations_table.php
+
+
+
+
+
+

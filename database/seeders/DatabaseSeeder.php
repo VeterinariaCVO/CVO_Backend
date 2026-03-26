@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
         WorkingDaySeeder::class,
         TimeSlotSeeder::class,
         AppointmentSeeder::class,
+        PetSeeder::class,
     ]);
 }
 }

@@ -10,7 +10,7 @@ class Appointment extends Model
     protected $fillable = [
         'pet_id',
         'time_slot_id',
-        'service',
+        'service_id',
         'status',
         'notes',
         'created_by'
@@ -29,5 +29,10 @@ class Appointment extends Model
     public function creator()
     {
         return $this->belongsTo(User::class,'created_by');
+    }
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
     }
 }
