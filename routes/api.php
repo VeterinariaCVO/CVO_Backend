@@ -75,6 +75,7 @@ Route::middleware(['auth:sanctum', 'role:3'])->group(function () {
     });
     Route::get('/cliente/perfil',        [UserController::class, 'show']);
     Route::put('/cliente/perfil',        [UserController::class, 'updatePerfil']);
+    Route::delete('/cliente/perfil',     [UserController::class, 'destroyPerfil']);
     Route::get('/mis-mascotas',         [PetController::class, 'index']);
     Route::get('/mis-mascotas/{id}',    [PetController::class, 'show']);
     Route::post('/mis-mascotas',        [PetController::class, 'store']);

@@ -183,4 +183,13 @@ class UserController extends Controller
             'user'    => new UserResource($user)
         ]);
     }
+    public function destroyPerfil()
+    {
+        $user = Auth::user();
+        $user->delete();
+
+        return response()->json([
+            'message' => 'Cuenta eliminada correctamente'
+        ]);
+    }
 }
